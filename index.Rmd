@@ -2,6 +2,7 @@
 title: "My awesome website"
 output: 
   html_document:
+    code_folding: hide
     toc: true
     toc_float: true
   
@@ -36,3 +37,16 @@ here is my cat ted:
 
 [about me](aboutpage.html)
 
+## Quarterly Results {.tabset}
+
+### By product
+
+this is my fist tab 
+
+### By Region
+
+second tab 
+
+# this is new section 
+
+nothing
