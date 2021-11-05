@@ -1,5 +1,5 @@
 ---
-title: "My awesome website"
+title: "Zhuolun Huang's Website"
 output: 
   html_document:
     code_folding: hide
@@ -8,45 +8,43 @@ output:
   
 ---
 
-# This is Jeff's awesome website
-
-what if I add some text here 
-
-![](https://media.giphy.com/media/drXGoW1iudhKw/giphy.gif)
-## here is a subsection 
-
-and here is some addition text ... 
-
-```{r}
-rnorm(10)
-```
-
-## links 
-
-let's link to usful tools for data science:
-
-* [Google](https://www.google.com)
-* [P8105](https://p8105.com)
-
-## local image
+# This is Zhuolun's awesome website
 
 
-here is my cat ted:
+Welcome to my landing page 
 
-## link to page within the site
 
-[about me](aboutpage.html)
+![](https://media.giphy.com/media/TztOD2c0znrtm/giphy-downsized-large.gif)
 
-## Quarterly Results {.tabset}
 
-### By product
+# Introduction
 
-this is my fist tab 
+This website is created for p8105 data science I HW4
 
-### By Region
 
-second tab 
+## guidance of website(links)
 
-# this is new section 
+"Home" is the main page.
+On the upper right corner, from left to right:
 
-nothing
+  * "[About me](aboutpage.html)" is a page giving my academic and professional experience.
+  * "[plotly](plotly.html)" holds some graphs generated from dataset `instacart`.
+  * "[Dashboard](Dashboard.html)" contains plots in "plotly. Specific description of each plot are in [Plotly](plotly.html).
+  * email: send me a email by clicking email.
+  * Github: click github to access my Github page.
+
+# Homework Prompt
+
+Below is the homework prompt
+
+## homework description {.tabset}
+
+### Problem 1
+
+* A brief introductory landing page
+* A page giving your academic and professional experience (i.e. a resume)
+* Links in the site navigation for your GitHub account, your email, and other professional networks.
+
+### Problem 2 
+
+* Create a flexdashboard using plotly for that includes at least three distinct plot types (e.g. scatterplots, line plots, bar plots, box plots, etc.).
