@@ -8,24 +8,17 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-library(flexdashboard)
 library(tidyverse)
 library(p8105.datasets)
-
 library(plotly)
+data("instacart")
+```
 
-data("nyc_airbnb")
-
-nyc_airbnb = 
-  nyc_airbnb %>% 
-  mutate(stars = review_scores_location / 2) %>%
-  select(
-    neighbourhood_group, neighbourhood, stars, price, room_type, lat, long) %>%
-  filter(
-    neighbourhood_group == "Manhattan",
-    room_type == "Entire home/apt",
-    price %in% 100:500) %>% 
-  drop_na(stars)
+```{r}
+data_df = 
+  instacart %>%
+  filter(aisle %in% c("fresh fruits","fresh herbs","fresh vegetables","yogurt","packaged vegetables fruits")) %>% 
+  select(aisle, product_name, days_since_prior_order)
 ```
 
 Column {data-width=650}
@@ -34,11 +27,18 @@ Column {data-width=650}
 ### Chart A
 
 ```{r}
-nyc_airbnb %>%
-  mutate(text_label = str_c("Price: $", price, "\nStars: ", stars)) %>% 
-  plot_ly(
-    x = ~lat, y = ~long, type = "scatter", mode = "markers",
-    color = ~price, text = ~text_label, alpha = 0.5)
+data_df %>% 
+  group_by(aisle) %>% 
+  count(product_name) %>% 
+  mutate(rank = min_rank(desc(n))) %>% 
+  filter(rank < 4) %>% 
+  arrange(desc(n)) %>% 
+  ungroup() %>% 
+  mutate(product_name = fct_reorder(product_name, n)) %>% 
+  mutate(text_label = str_c("Name: ", product_name, "\nnumber: ", n)) %>% 
+  plot_ly( y = ~n, x = ~product_name, type = "scatter", mode = "marker",text = ~text_label, alpha = 0.5) %>% 
+  layout(xaxis = list(tickfont = list(size = 8)),
+        yaxis = list(tickfont = list(size = 8)))
 ```
 
 Column {data-width=350}
@@ -47,12 +47,29 @@ Column {data-width=350}
 ### Chart B
 
 ```{r}
-
+data_df %>% 
+  filter(aisle %in% c("fresh fruits","fresh herbs","fresh vegetables","packaged vegetables fruits")) %>% 
+  group_by(aisle) %>% 
+  count(product_name) %>% 
+  mutate(rank = min_rank(desc(n))) %>% 
+  filter(rank < 21) %>% 
+  arrange(desc(n)) %>% 
+  ungroup() %>%
+  plot_ly(y = ~n, x = ~aisle, color = ~aisle, type = "box", colors = "viridis")
 ```
 
 ### Chart C
 
 ```{r}
-
+data_df %>% 
+  group_by(product_name) %>% 
+  mutate(days_since_prior_order = mean(days_since_prior_order)) %>% 
+  filter(days_since_prior_order > 1 & days_since_prior_order < 3) %>% 
+  ungroup() %>% 
+  mutate(product_name = fct_reorder(product_name, days_since_prior_order)) %>% 
+  plot_ly(x = ~product_name, y = ~days_since_prior_order, color = ~product_name, type = "bar", colors = "viridis") %>% 
+  layout(showlegend = FALSE) %>% 
+  layout(xaxis = list(tickfont = list(size = 8)),
+        yaxis = list(tickfont = list(size = 8)))
 ```
 

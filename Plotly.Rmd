@@ -16,6 +16,14 @@ library(plotly)
 data("instacart")
 ```
 
+I would like to know the most popular products ordered in aisles: `fresh fruits`,`fresh herbs`,`fresh vegetables`,`yogurt`,`packaged vegetables fruits` as well as their number of products ordered in each aisle. 
+
+I also want to know the most frequently purchased items in each aisles (1 < average reorder day < 3), so I can try some popular items next time.
+
+pointplot:  number of the most popular 3 items ordered vs. items' names
+boxplot: number of items ordered in the most popular 20 products in aisle vs. the number of aisle
+barchart: days since prior order vs. items' names among average reorder day more than 1 day and less than 3 days.
+
 clean the data
 
 ```{r}
@@ -24,18 +32,6 @@ data_df =
   instacart %>%
   filter(aisle %in% c("fresh fruits","fresh herbs","fresh vegetables","yogurt","packaged vegetables fruits")) %>% 
   select(aisle, product_name, days_since_prior_order)
-
-#nyc_airbnb = 
-#  nyc_airbnb %>% 
-#  mutate(stars = review_scores_location / 2) %>%
-#  select(
-#    neighbourhood_group, neighbourhood, stars, price, room_type, lat, long) %>%
-#  filter(
-#    neighbourhood_group == "Manhattan",
-#    room_type == "Entire home/apt",
-#    price %in% 100:500) %>% 
-#  drop_na(stars)
-
 ```
  
  
@@ -54,12 +50,6 @@ data_df %>%
   plot_ly( y = ~n, x = ~product_name, type = "scatter", mode = "marker",text = ~text_label, alpha = 0.5) %>% 
   layout(xaxis = list(tickfont = list(size = 8)),
         yaxis = list(tickfont = list(size = 8)))
-#nyc_airbnb %>%
-#  mutate(text_label = str_c("Price: $", price, "\nStars: ", stars)) %>% 
-#  plot_ly(
-#    x = ~lat, y = ~long, type = "scatter", mode = "markers",
-#    color = ~price, text = ~text_label, alpha = 0.5)
-
 ```
  
  # make a boxplot
@@ -69,14 +59,10 @@ data_df %>%
   group_by(aisle) %>% 
   count(product_name) %>% 
   mutate(rank = min_rank(desc(n))) %>% 
-  filter(rank < 20) %>% 
+  filter(rank < 21) %>% 
   arrange(desc(n)) %>% 
-  ungroup() %>% 
-#  mutate(product_name = fct_reorder(product_name, n)) %>% 
+  ungroup() %>%
   plot_ly(y = ~n, x = ~aisle, color = ~aisle, type = "box", colors = "viridis")
-#nyc_airbnb %>% 
-#  mutate(neighbourhood = fct_reorder(neighbourhood, price)) %>% #
-#  plot_ly(y = ~price, color = ~neighbourhood, type = "box", #colors = "viridis")
 ```
 
 # make a bar chart
