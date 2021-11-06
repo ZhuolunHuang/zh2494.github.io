@@ -27,7 +27,6 @@ barchart: days since prior order vs. items' names among average reorder day more
 clean the data
 
 ```{r}
-
 data_df = 
   instacart %>%
   filter(aisle %in% c("fresh fruits","fresh herbs","fresh vegetables","yogurt","packaged vegetables fruits")) %>% 
