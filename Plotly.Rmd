@@ -7,17 +7,23 @@ output:
     
 ---
 
+let's look at the Instacart data
+
 ```{r, message = FALSE, warning = FALSE}
 library(tidyverse)
 library(p8105.datasets)
 library(plotly)
+data("instacart")
 ```
 
-let's look at the Instacart data
+clean the data
 
 ```{r}
 
-data("instacart") 
+data_df = 
+  instacart %>%
+  filter(aisle %in% c("fresh fruits","fresh herbs","fresh vegetables","yogurt","packaged vegetables fruits")) %>% 
+  select(aisle, product_name, days_since_prior_order)
 
 #nyc_airbnb = 
 #  nyc_airbnb %>% 
@@ -32,54 +38,61 @@ data("instacart")
 
 ```
  
- ## makr a scatterplot
  
- here is a plot scatterplot 
- 
-```{r}
-nyc_airbnb %>%
-  mutate(text_label = str_c("Price: $", price, "\nStars: ", stars)) %>% 
-  plot_ly(
-    x = ~lat, y = ~long, type = "scatter", mode = "markers",
-    color = ~price, text = ~text_label, alpha = 0.5)
-
-```
+ # make a scatterplot
  
 ```{r}
-nyc_airbnb %>% 
-  mutate(neighbourhood = fct_reorder(neighbourhood, price)) %>% 
-  plot_ly(y = ~price, color = ~neighbourhood, type = "box", colors = "viridis")
+data_df %>% 
+  group_by(aisle) %>% 
+  count(product_name) %>% 
+  mutate(rank = min_rank(desc(n))) %>% 
+  filter(rank < 4) %>% 
+  arrange(desc(n)) %>% 
+  ungroup() %>% 
+  mutate(product_name = fct_reorder(product_name, n)) %>% 
+  mutate(text_label = str_c("Name: ", product_name, "\nnumber: ", n)) %>% 
+  plot_ly( y = ~n, x = ~product_name, type = "scatter", mode = "marker",text = ~text_label, alpha = 0.5) %>% 
+  layout(xaxis = list(tickfont = list(size = 8)),
+        yaxis = list(tickfont = list(size = 8)))
+#nyc_airbnb %>%
+#  mutate(text_label = str_c("Price: $", price, "\nStars: ", stars)) %>% 
+#  plot_ly(
+#    x = ~lat, y = ~long, type = "scatter", mode = "markers",
+#    color = ~price, text = ~text_label, alpha = 0.5)
+
+```
+ 
+ # make a boxplot
+```{r}
+data_df %>% 
+  filter(aisle %in% c("fresh fruits","fresh herbs","fresh vegetables","packaged vegetables fruits")) %>% 
+  group_by(aisle) %>% 
+  count(product_name) %>% 
+  mutate(rank = min_rank(desc(n))) %>% 
+  filter(rank < 20) %>% 
+  arrange(desc(n)) %>% 
+  ungroup() %>% 
+#  mutate(product_name = fct_reorder(product_name, n)) %>% 
+  plot_ly(y = ~n, x = ~aisle, color = ~aisle, type = "box", colors = "viridis")
+#nyc_airbnb %>% 
+#  mutate(neighbourhood = fct_reorder(neighbourhood, price)) %>% #
+#  plot_ly(y = ~price, color = ~neighbourhood, type = "box", #colors = "viridis")
 ```
 
-here comes a bar chart
+# make a bar chart
 
 ```{r}
-nyc_airbnb %>% 
-  count(neighbourhood) %>% 
-  mutate(neighbourhood = fct_reorder(neighbourhood, n)) %>% 
-  plot_ly(x = ~neighbourhood, y = ~n, color = ~neighbourhood, type = "bar", colors = "viridis")
+data_df %>% 
+  group_by(product_name) %>% 
+  mutate(days_since_prior_order = mean(days_since_prior_order)) %>% 
+  filter(days_since_prior_order > 1 & days_since_prior_order < 3) %>% 
+  ungroup() %>% 
+  mutate(product_name = fct_reorder(product_name, days_since_prior_order)) %>% 
+  plot_ly(x = ~product_name, y = ~days_since_prior_order, color = ~product_name, type = "bar", colors = "viridis") %>% 
+  layout(showlegend = FALSE) %>% 
+  layout(xaxis = list(tickfont = list(size = 8)),
+        yaxis = list(tickfont = list(size = 8)))
 ```
-
-## ggplotly 
-
-```{r}
-scatter_ggplot = 
-  nyc_airbnb %>%
-  ggplot(aes(x = lat, y = long, color = price)) +
-  geom_point(alpha = 0.25) +
-  coord_cartesian()
-
-ggplotly(scatter_ggplot)
-```
-
-
-```{r}
-
-```
-
-
-
-
 
 
 
